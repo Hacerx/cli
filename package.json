@@ -12,13 +12,13 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "@types/node": "^22.15.17",
+    "@types/node": "^22.15.21",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@hacerx/sf-auth-decrypt": "^1.1.0",
-    "@jsforce/jsforce-node": "^3.8.1",
-    "commander": "^13.1.0",
+    "@hacerx/sf-auth-decrypt": "^1.1.2",
+    "@jsforce/jsforce-node": "^3.8.2",
+    "commander": "^14.0.0",
     "prettier": "^3.5.3"
   }
 }

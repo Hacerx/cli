@@ -1,8 +1,6 @@
 import { getConnection , getAllSobjects } from "../../../lib/sf.js";
 import { CommandBase, FlagType } from "../../../lib/CommandBase.js";
 import { wildTest } from "../../../lib/strings.js";
-// @ts-ignore
-import { getOrgsMap } from '@hacerx/sf-auth-decrypt'
 import { writeFile } from '../../../lib/files.js';
 import { normalize } from "node:path";
 import { Connection } from "@jsforce/jsforce-node";
