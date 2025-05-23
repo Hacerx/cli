@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "rootDir": "src",
+      "outDir": "dist",
+      "strict": true,
+      "target": "ESNext",
+      "module": "NodeNext",
+      "declaration": true,
+      "esModuleInterop": true,
+      "moduleResolution": "nodenext",
+      "baseUrl": "./",
+      "plugins": [{ "transform": "typescript-transform-paths" }],
+      "paths": {
+        "@/*": ["./src/*"]
+      }
+    },
+    "include": ["src/**/*.ts"]
+  }
