@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { Command, Option } from 'commander';
 import fs from 'fs';
 import path from 'path';
@@ -31,7 +29,7 @@ export async function registerCommands({ dirPath, program, parse = true }: Regis
       parentCommand.addCommand(subCommand);
       await registerCommands({dirPath: fullPath, program: subCommand, parse: false});
     } else if (item.isFile() && !item.name.endsWith('.d.ts') && (item.name.endsWith('.ts') || item.name.endsWith('.js'))) {
-      const mod: CommandBase = new (await import(fullPath.replace(/\.ts$/, '.js'))).default();
+      const mod: CommandBase = new (await import(`file://${fullPath.replace(/\.ts$/, '.js')}`)).default();
       const cmd = parentCommand
         .command(item.name.split('.')[0])
         .description(mod.description ?? '')
