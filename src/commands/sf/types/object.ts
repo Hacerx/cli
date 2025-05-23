@@ -29,13 +29,12 @@ const flags = {
         required: false
     }),
     'declare-module': FlagType.boolean({
-        char: 'b',
         description: 'Add declare module to the output file',
         required: false
     })
 } as const;
 
-export default class TestCommand extends CommandBase<typeof flags> {
+export default class ObjectType extends CommandBase<typeof flags> {
     description = `SObject(s) to get types for
 
 Get multiple types, either set multiple --sobject flags or a single --sobject flag with multiple names separated by spaces. Enclose names that contain spaces in one set of double quotes.
@@ -50,7 +49,7 @@ Allows wildcard characters * and ..`;
         conn: Connection,
         sobject: string,
         outputDir: string
-      ): Promise<{ sobject: string; type: string }> {
+    ): Promise<{ sobject: string; type: string }> {
         console.log(`Processing ${sobject}`);
     
         const description = await conn.describe(sobject);
