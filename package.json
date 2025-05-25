@@ -1,5 +1,5 @@
 {
-  "name": "@hacerx/cli-core",
+  "name": "alpha-cli",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -20,5 +20,8 @@
     "@jsforce/jsforce-node": "^3.8.2",
     "commander": "^14.0.0",
     "prettier": "^3.5.3"
+  },
+  "bin": {
+    "alpha-cli": "./dist/index.js"
   }
 }
