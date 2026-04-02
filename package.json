@@ -1,11 +1,16 @@
 {
-  "name": "alpha-cli",
+  "name": "hacerx",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build:watch": "tsc -w",
-    "build": "tsc"
+    "build": "tsc",
+    "build:scripts": "tsc -p tsconfig.scripts.json",
+    "docs": "npm run build && npm run build:scripts && node scripts/generate-docs.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +18,9 @@
   "type": "module",
   "devDependencies": {
     "@types/node": "^22.15.21",
-    "typescript": "^5.8.3"
+    "@vitest/coverage-v8": "^4.1.2",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "@hacerx/sf-auth-decrypt": "^1.1.4",
@@ -22,6 +29,6 @@
     "prettier": "^3.5.3"
   },
   "bin": {
-    "alpha-cli": "./dist/index.js"
+    "hacerx": "./dist/index.js"
   }
 }
