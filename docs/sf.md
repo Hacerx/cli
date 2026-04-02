@@ -38,7 +38,7 @@ Generate a permissionset for system admins with full permissions to all objects
 
 | Flag | Short | Type | Required | Default | Description |
 |------|-------|------|----------|---------|-------------|
-| `--username` | `-u` | string | Yes | — | Salesforce username |
+| `--username` | `-u` | sfOrg | Yes | — | Salesforce username or org alias (defaults to target-org in .sf/config.json) |
 | `--output-dir` | `-o` | string | No | `"./"` | Output directory |
 
 ---
@@ -59,7 +59,7 @@ Allows wildcard characters * and ..
 |------|-------|------|----------|---------|-------------|
 | `--sobject` | `-s` | array | Yes | — | SObject(s) to get types for |
 | `--output-dir` | `-o` | string | No | `"./types/"` | Output directory |
-| `--username` | `-u` | string | Yes | — | Salesforce username |
+| `--username` | `-u` | sfOrg | Yes | — | Salesforce username or org alias (defaults to target-org in .sf/config.json) |
 | `--case-insensitive` | `-i` | boolean | No | — | Case insensitive SObject names |
 | `--declare-module` | — | boolean | No | — | Add declare module to the output file |
 
