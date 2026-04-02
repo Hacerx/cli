@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { readdirSync, existsSync, writeFileSync, unlinkSync, rmSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = join(__filename, '..');
@@ -65,8 +65,39 @@ try {
         platform: 'node',
         format: 'esm',
         outfile: outFile,
-        // Polyfill require() for bundled CJS deps that use it at runtime
-        banner: { js: "#!/usr/bin/env node\nimport{createRequire}from'module';const require=createRequire(import.meta.url);" },
+        // Bundle the npm punycode package inline so Node's deprecated built-in (DEP0040)
+        // is never loaded at runtime (required by whatwg-url@5 and tr46 via node-fetch).
+        alias: {
+            punycode: resolve(projectRoot, 'node_modules', 'punycode', 'punycode.js'),
+        },
+        // Polyfill require() for bundled CJS deps that use it at runtime.
+        // Also patch url.parse (DEP0169) with a WHATWG URL-based replacement before
+        // any bundled code runs — faye / websocket-driver call it but are unmaintained.
+        banner: {
+            // Line 1: shebang (must be its own line — it's a comment that swallows the rest).
+            // Line 2+: ESM-compatible CJS require polyfill + url.parse replacement (DEP0169).
+            // url.parse is patched before any bundled module runs so faye/websocket-driver
+            // (unmaintained) never call the deprecated Node built-in.
+            js: '#!/usr/bin/env node\n'
+                + "import{createRequire}from'module';const require=createRequire(import.meta.url);"
+                + "(()=>{"
+                + "const _m=require('url');"
+                + "_m.parse=function(s,q){"
+                + "if(!s)return null;s=String(s);"
+                + "let u;"
+                + "try{u=new URL(s);}catch{"
+                + "try{u=new URL(s,'http://localhost');}catch{return null;}"
+                + "}"
+                + "const abs=u.origin!='null'&&!s.startsWith('/')&&!s.startsWith('.');"
+                + "const port=u.port||null,search=u.search||null,hash=u.hash||null;"
+                + "const query=q?Object.fromEntries(u.searchParams):search?search.slice(1):null;"
+                + "const auth=u.username?(u.password?u.username+':'+u.password:u.username):null;"
+                + "return abs"
+                + "?{href:u.href,protocol:u.protocol,slashes:true,auth,host:u.host,port,hostname:u.hostname,hash,search,query,pathname:u.pathname,path:u.pathname+(search||'')}"
+                + ":{href:s,protocol:null,slashes:null,auth:null,host:null,port:null,hostname:null,hash,search,query,pathname:u.pathname,path:u.pathname+(search||'')};"
+                + "};"
+                + "})();",
+        },
     });
     console.log('Built: dist/index.js');
 }
