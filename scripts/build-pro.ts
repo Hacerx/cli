@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { readdirSync, existsSync, writeFileSync, unlinkSync, rmSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -80,6 +80,11 @@ try {
     platform: 'node',
     format: 'esm',
     outfile: outFile,
+    // Bundle the npm punycode package inline so Node's deprecated built-in (DEP0040)
+    // is never loaded at runtime (required by whatwg-url@5 and tr46 via node-fetch).
+    alias: {
+      punycode: resolve(projectRoot, 'node_modules', 'punycode', 'punycode.js'),
+    },
     // Polyfill require() for bundled CJS deps that use it at runtime
     banner: { js: "#!/usr/bin/env node\nimport{createRequire}from'module';const require=createRequire(import.meta.url);" },
   });
