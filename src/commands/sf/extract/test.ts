@@ -65,6 +65,12 @@ export default class TestUtils extends CommandBase<typeof flags> {
     flags = flags;
 
     description = 'Utility to find test files in the base directory and its subdirectories.';
+
+    examples = [
+        { description: 'Extract all test classes from the current directory', command: 'hacerx sf extract test' },
+        { description: 'Extract test classes from a specific directory', command: 'hacerx sf extract test --base-dir ./force-app' },
+        { description: 'Extract only from a specific test suite', command: 'hacerx sf extract test --test-suite MySuite' },
+    ];
     
     async run(): Promise<void> {
 

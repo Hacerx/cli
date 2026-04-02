@@ -11,6 +11,23 @@ Utility to find test files in the base directory and its subdirectories.
 | `--base-dir` | `-b` | string | No | `process.cwd()` | Base directory for the test files |
 | `--test-suite` | `-s` | array | No | — | Name of the test suite to find files for |
 
+### Examples
+
+# Extract all test classes from the current directory
+```bash
+hacerx sf extract test
+```
+
+# Extract test classes from a specific directory
+```bash
+hacerx sf extract test --base-dir ./force-app
+```
+
+# Extract only from a specific test suite
+```bash
+hacerx sf extract test --test-suite MySuite
+```
+
 ---
 
 ## sf permissionset generate-admin

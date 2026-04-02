@@ -1,4 +1,3 @@
-import { getConnection, getAllPermissionableSobjects, getAllPermissionableFields } from "../../../lib/sf.js";
 import { CommandBase, FlagType } from "../../../lib/CommandBase.js";
 import { writeFile } from '../../../lib/files.js';
 import { normalize } from "node:path";
@@ -24,6 +23,7 @@ export default class GenerateAdmin extends CommandBase<typeof flags> {
 
     async run() {
         try {
+            const { getConnection, getAllPermissionableSobjects, getAllPermissionableFields } = await import('../../../lib/sf.js');
             console.log(`Connecting to Salesforce using username ${this.options.username}...`);
             const conn = await getConnection(this.options.username);
             

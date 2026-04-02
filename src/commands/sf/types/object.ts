@@ -1,9 +1,8 @@
-import { getConnection , getAllSobjects } from "../../../lib/sf.js";
 import { CommandBase, FlagType } from "../../../lib/CommandBase.js";
 import { wildTest } from "../../../lib/strings.js";
 import { writeFile } from '../../../lib/files.js';
 import { normalize } from "node:path";
-import { Connection } from "@jsforce/jsforce-node";
+import type { Connection } from "@jsforce/jsforce-node";
 import { generateTypes } from "../../../lib/types/object.js";
 
 const flags = {
@@ -67,6 +66,7 @@ Allows wildcard characters * and ..`;
 
     async run() {
         try{
+            const { getConnection, getAllSobjects } = await import('../../../lib/sf.js');
             const conn = await getConnection(this.options.username);
             const wildcards = this.options.sobject?.filter((sobject) => sobject.includes('*') || sobject.includes('.')) || [];
             let allSObjects: string[] = [];

@@ -18,10 +18,16 @@ type FlagDef = {
   defaultValue?: string;
 };
 
+type Example = {
+  description: string;
+  command: string;
+};
+
 type CommandEntry = {
   path: string[];
   description: string;
   flags: Record<string, FlagDef>;
+  examples: Example[];
 };
 
 function extractStringLiteral(node: ts.Node): string | undefined {
@@ -75,6 +81,27 @@ function parseFlagObject(
   return result;
 }
 
+function parseExamples(
+  arrayLiteral: ts.ArrayLiteralExpression,
+  sourceFile: ts.SourceFile
+): Example[] {
+  const examples: Example[] = [];
+  for (const element of arrayLiteral.elements) {
+    if (!ts.isObjectLiteralExpression(element)) continue;
+    let description = '';
+    let command = '';
+    for (const prop of element.properties) {
+      if (!ts.isPropertyAssignment(prop)) continue;
+      const name = prop.name.getText(sourceFile).replace(/['"]/g, '');
+      const value = extractStringLiteral(prop.initializer) ?? '';
+      if (name === 'description') description = value;
+      if (name === 'command') command = value;
+    }
+    if (command) examples.push({ description, command });
+  }
+  return examples;
+}
+
 function parseFlagType(callExpr: ts.CallExpression): string {
   const expr = callExpr.expression;
   if (ts.isPropertyAccessExpression(expr)) return expr.name.text;
@@ -87,6 +114,7 @@ function parseCommandSource(filePath: string): Omit<CommandEntry, 'path'> | null
 
   let description = '';
   const flags: Record<string, FlagDef> = {};
+  let examples: Example[] = [];
 
   ts.forEachChild(sourceFile, (node) => {
     // Extract top-level `const flags = { ... } as const`
@@ -123,15 +151,15 @@ function parseCommandSource(filePath: string): Omit<CommandEntry, 'path'> | null
       }
     }
 
-    // Extract `description` from the exported class
+    // Extract `description` and `examples` from the exported class
     if (ts.isClassDeclaration(node)) {
       for (const member of node.members) {
-        if (
-          ts.isPropertyDeclaration(member) &&
-          member.name?.getText(sourceFile) === 'description' &&
-          member.initializer
-        ) {
+        if (!ts.isPropertyDeclaration(member) || !member.initializer) continue;
+        const memberName = member.name?.getText(sourceFile);
+        if (memberName === 'description') {
           description = extractStringLiteral(member.initializer) ?? '';
+        } else if (memberName === 'examples' && ts.isArrayLiteralExpression(member.initializer)) {
+          examples = parseExamples(member.initializer, sourceFile);
         }
       }
     }
@@ -139,7 +167,7 @@ function parseCommandSource(filePath: string): Omit<CommandEntry, 'path'> | null
 
   if (!description && Object.keys(flags).length === 0) return null;
 
-  return { description, flags };
+  return { description, flags, examples };
 }
 
 function collectSourceFiles(
@@ -197,6 +225,12 @@ function renderFlagsTable(flags: Record<string, FlagDef>): string {
     '|------|-------|------|----------|---------|-------------|',
     ...rows,
   ].join('\n');
+}
+
+function renderExamples(examples: Example[]): string {
+  return examples
+    .map((ex) => [`${ex.description ? `# ${ex.description}` : ''}`, '```bash', ex.command, '```'].filter(Boolean).join('\n'))
+    .join('\n\n');
 }
 
 function generateReadme(
@@ -258,6 +292,10 @@ function generateGroupDoc(group: string, entries: CommandEntry[]): string {
     lines.push(entry.description || 'No description provided.', '');
     lines.push('### Options', '');
     lines.push(renderFlagsTable(entry.flags), '');
+    if (entry.examples.length > 0) {
+      lines.push('### Examples', '');
+      lines.push(renderExamples(entry.examples), '');
+    }
     lines.push('---', '');
   }
 

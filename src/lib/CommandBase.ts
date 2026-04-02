@@ -37,11 +37,18 @@ export const FlagType = {
     array: <T=string>(def: FlagDefinition<T[]>) => { def.type = 'array'; return def; },
 }
 
+export type Example = {
+    description: string;
+    command: string;
+};
+
 export abstract class CommandBase<T extends Flags = Flags> {
 
     abstract description: string;
     abstract run(): void | Promise<void>;
     abstract flags: T;
+
+    examples?: Example[];
 
     options: CamelizeKeys<InferOptions<T>> = {} as CamelizeKeys<InferOptions<T>>;
 
