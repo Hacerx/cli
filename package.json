@@ -8,6 +8,7 @@
     "build": "tsc",
     "build:scripts": "tsc -p tsconfig.scripts.json",
     "docs": "npm run build && npm run build:scripts && node scripts/generate-docs.js",
+    "build:pro": "npm run build:scripts && node scripts/build-pro.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@types/node": "^22.15.21",
     "@vitest/coverage-v8": "^4.1.2",
+    "esbuild": "^0.27.5",
     "typescript": "^5.8.3",
     "vitest": "^4.1.2"
   },
