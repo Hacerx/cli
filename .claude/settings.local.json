@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_engram_engram__mem_search",
+      "mcp__plugin_engram_engram__mem_save",
+      "mcp__plugin_engram_engram__mem_get_observation",
+      "Bash(cp \"C:/Users/equipo/Documents/repos/cli/.claude/worktrees/agent-a0a6968f/tsconfig.scripts.json\" \"C:/Users/equipo/Documents/repos/cli/tsconfig.scripts.json\")",
+      "Bash(cp \"C:/Users/equipo/Documents/repos/cli/.claude/worktrees/agent-a0a6968f/package.json\" \"C:/Users/equipo/Documents/repos/cli/package.json\")",
+      "Bash(mkdir -p \"C:/Users/equipo/Documents/repos/cli/scripts\")",
+      "Bash(cp \"C:/Users/equipo/Documents/repos/cli/.claude/worktrees/agent-a0a6968f/scripts/generate-docs.ts\" \"C:/Users/equipo/Documents/repos/cli/scripts/generate-docs.ts\")",
+      "Bash(npm install:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run:*)",
+      "mcp__plugin_engram_engram__mem_session_summary"
+    ]
+  }
+}
