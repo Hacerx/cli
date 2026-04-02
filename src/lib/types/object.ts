@@ -15,7 +15,7 @@ export async function generateTypes(sObjectDef: DescribeSObjectResult): Promise<
   
     const relations = generateChildRelations(sObjectDef);
   
-    let tsContent = `type ${sObjectDef.name} = {\n`;
+    let tsContent = `export type ${sObjectDef.name} = {\n`;
     //     let tsContent = `
     //   import { SObject } from './BaseTypes';
     //   ${relations.imports}

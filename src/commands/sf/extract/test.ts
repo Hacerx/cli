@@ -14,7 +14,7 @@ const flags = {
     })
 } as const;
 
-function extractTestClassesFromXml(content: string): string[] {
+export function extractTestClassesFromXml(content: string): string[] {
     const regex = /<testClassName>(.*?)<\/testClassName>/g;
     let matches;
     const testClasses = [];
