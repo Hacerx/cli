@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 export type FlagDefinition<T = any> = {
     char?: string;
     description: string;
@@ -6,6 +9,12 @@ export type FlagDefinition<T = any> = {
     // regexp?: RegExp;
     required?: boolean;
     type?: 'string' | 'integer' | 'boolean' | 'float' | 'array';
+    /**
+     * Called when no value is provided for this flag.
+     * If it returns a value, that value is used as the default.
+     * If it returns undefined and the flag is required, an error is thrown.
+     */
+    resolveDefault?: () => string | undefined;
 }
 
 export type Flags = {
@@ -28,6 +37,18 @@ type CamelizeKeys<T extends object> = {
 declare const _: unique symbol;
 type NoOverride = { [_]: typeof _; }
 
+function resolveSfOrg(): string | undefined {
+    try {
+        const configPath = join(process.cwd(), '.sf', 'config.json');
+        if (existsSync(configPath)) {
+            const config = JSON.parse(readFileSync(configPath, 'utf-8')) as Record<string, string>;
+            return config['target-org'] ?? undefined;
+        }
+    } catch {
+        // ignore read/parse errors
+    }
+    return undefined;
+}
 
 export const FlagType = {
     string: (def: FlagDefinition<string>) => { def.type = 'string'; return def; },
@@ -35,6 +56,17 @@ export const FlagType = {
     boolean: (def: FlagDefinition<boolean>) => { def.type = 'boolean'; return def; },
     float: (def: FlagDefinition<number>) => { def.type = 'float'; return def; },
     array: <T=string>(def: FlagDefinition<T[]>) => { def.type = 'array'; return def; },
+    /**
+     * Salesforce org flag (-u / --username).
+     * If no value is provided, falls back to `target-org` in `.sf/config.json`.
+     * If the flag is required and neither source provides a value, the CLI exits with an error.
+     */
+    sfOrg: (def: Omit<FlagDefinition<string>, 'resolveDefault'>) => {
+        const flagDef = def as FlagDefinition<string>;
+        flagDef.type = 'string';
+        flagDef.resolveDefault = resolveSfOrg;
+        return flagDef;
+    },
 }
 
 export type Example = {

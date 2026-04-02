@@ -3,9 +3,9 @@ import { writeFile } from '../../../lib/files.js';
 import { normalize } from "node:path";
 
 const flags = {
-    username: FlagType.string({
+    username: FlagType.sfOrg({
         char: 'u',
-        description: 'Salesforce username',
+        description: 'Salesforce username or org alias (defaults to target-org in .sf/config.json)',
         required: true
     }),
     'output-dir': FlagType.string({
