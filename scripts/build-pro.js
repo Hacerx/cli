@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { readdirSync, existsSync, writeFileSync, unlinkSync, rmSync } from 'node:fs';
-import { join, relative, resolve } from 'node:path';
+import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = join(__filename, '..');
@@ -65,11 +65,6 @@ try {
         platform: 'node',
         format: 'esm',
         outfile: outFile,
-        // Redirect the deprecated Node.js built-in punycode to the npm package so it gets
-        // bundled inline and Node.js never loads the deprecated core module (DEP0040).
-        alias: {
-            punycode: resolve(projectRoot, 'node_modules', 'punycode', 'punycode.js'),
-        },
         // Polyfill require() for bundled CJS deps that use it at runtime
         banner: { js: "#!/usr/bin/env node\nimport{createRequire}from'module';const require=createRequire(import.meta.url);" },
     });

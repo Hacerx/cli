@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@hacerx/sf-auth-decrypt": "^1.1.4",
-    "@jsforce/jsforce-node": "^3.8.2",
+    "@jsforce/jsforce-node": "^3.10.14",
     "commander": "^14.0.0",
     "prettier": "^3.5.3"
   },
