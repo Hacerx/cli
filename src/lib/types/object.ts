@@ -50,7 +50,7 @@ export async function generateTypes(sObjectDef: DescribeSObjectResult): Promise<
     // close object
     tsContent += '} \n';
   
-    tsContent = `${picklistTypes.typeDefs.join('\n')}\n\n${await format(tsContent)}`;
+    tsContent = `${relations.imports}\n${picklistTypes.typeDefs.join('\n')}\n\n${await format(tsContent)}`;
   
     return tsContent.trim();
   }
@@ -168,16 +168,16 @@ export async function generateTypes(sObjectDef: DescribeSObjectResult): Promise<
    */
   function generateChildRelations(object: DescribeSObjectResult): { childrenDef: string; imports: string } {
     let childrenDef = '\n// Child relationships\n';
-    const imports = '';
+    let imports = '';
     object.childRelationships?.forEach((child) => {
       if (child.relationshipName) {
         const childType = child.childSObject ?? 'SObject';
         // const childType = (config as any)?.sObjects?.includes(child.childSObject) ?
         // child.childSObject : 'SObject'
   
-        // if (childType !== 'SObject' && childType !== object.name) {
-        //   imports += `import { ${childType} } from './${childType}';\n`;
-        // }
+        if (childType !== 'SObject' && childType !== object.name) {
+          imports += `import { ${childType} } from './${childType}';\n`;
+        }
   
         childrenDef += `/** 
        * @Object - ${child.childSObject}
