@@ -180,13 +180,15 @@ function generateChildRelations(object: DescribeSObjectResult): {
 } {
   let childrenDef = "\n// Child relationships\n";
   let imports = "";
+  const importedTypes = new Set<string>();
   object.childRelationships?.forEach((child) => {
     if (child.relationshipName) {
       const childType = child.childSObject ?? "SObject";
       // const childType = (config as any)?.sObjects?.includes(child.childSObject) ?
       // child.childSObject : 'SObject'
 
-      if (childType !== "SObject" && childType !== object.name) {
+      if (childType !== "SObject" && childType !== object.name && !importedTypes.has(childType)) {
+        importedTypes.add(childType);
         imports += `import { ${childType} } from './${childType}';\n`;
       }
 
